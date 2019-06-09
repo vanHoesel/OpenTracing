@@ -25,6 +25,7 @@ do { my $x = {
        'runtime' => {
                       'requires' => {
                                       'Math::Random::Secure' => '0',
+                                      'Scalar::Util' => '0',
                                       'Time::HiRes' => '0',
                                       'parent' => '0',
                                       'strict' => '0',

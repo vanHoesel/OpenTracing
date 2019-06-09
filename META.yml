@@ -29,35 +29,40 @@ no_index:
 provides:
   OpenTracing:
     file: lib/OpenTracing.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::Batch:
     file: lib/OpenTracing/Batch.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::Common:
     file: lib/OpenTracing/Common.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::Log:
     file: lib/OpenTracing/Log.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::Process:
     file: lib/OpenTracing/Process.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::Span:
     file: lib/OpenTracing/Span.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::SpanProxy:
     file: lib/OpenTracing/SpanProxy.pm
-    version: '0.001'
+    version: '0.002'
   OpenTracing::Tag:
     file: lib/OpenTracing/Tag.pm
-    version: '0.001'
+    version: '0.002'
 requires:
   Math::Random::Secure: '0'
+  Scalar::Util: '0'
   Time::HiRes: '0'
   parent: '0'
   strict: '0'
   warnings: '0'
-version: '0.001'
+resources:
+  bugtracker: https://github.com/team-at-cpan/OpenTracing/issues
+  homepage: https://github.com/team-at-cpan/OpenTracing
+  repository: https://github.com/team-at-cpan/OpenTracing.git
+version: '0.002'
 x_authority: cpan:TEAM
 x_generated_by_perl: v5.28.1
 x_serialization_backend: 'YAML::Tiny version 1.73'

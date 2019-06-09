@@ -3,11 +3,12 @@ package OpenTracing::Batch;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 use parent qw(OpenTracing::Common);
 
 use Time::HiRes;
+use Scalar::Util ();
 
 sub process { shift->{process} //= OpenTracing::Process->new }
 
@@ -35,13 +36,10 @@ sub new_span {
 
 sub DESTROY {
     my ($self) = @_;
-    warn "prepare for destroy callback";
     return if ${^GLOBAL_PHASE} eq 'DESTRUCT';
-    warn "okay destroy callback";
     my $on_destroy = delete $self->{on_destroy}
         or return;
     $self->$on_destroy;
-    warn "called";
     return;
 }
 
