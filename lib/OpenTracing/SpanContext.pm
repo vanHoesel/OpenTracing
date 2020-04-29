@@ -1,21 +1,19 @@
-package OpenTracing::SpanProxy;
+package OpenTracing::SpanContext;
 
 use strict;
 use warnings;
 
 # VERSION
 
+use parent qw(OpenTracing::Common);
+
 =encoding utf8
 
 =head1 NAME
 
-OpenTracing::SpanProxy - wrapper around an L<OpenTracing::Span>
+OpenTracing::SpanContext - tracks IDs and baggage for spans
 
 =head1 DESCRIPTION
-
-This is the wrapper class that user code would normally receive when working
-with spans. It allows the creation of nested subspans, and will automatically
-mark the span as complete when the proxy object is discarded.
 
 =cut
 
@@ -38,12 +36,7 @@ Writes a log entry to the L<OpenTracing::Span>.
 
 =cut
 
-sub id { shift->span->id }
-sub trace_id { shift->span->trace_id }
-sub parent_id { shift->span->parent_id }
 sub log { shift->span->log(@_) }
-sub duration { shift->span->duration(@_) }
-sub finish { shift->span->finish(@_) }
 
 =head2 new_span
 
@@ -58,7 +51,7 @@ sub new_span {
         $parent->trace_id,
         $parent->id,
     );
-    $parent->tracer->span($name => %args);
+    $parent->tracer->new_span($name => %args);
 }
 
 =head2 DESTROY

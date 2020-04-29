@@ -1,40 +1,49 @@
-package OpenTracing::Batch;
+package OpenTracing::Tracer;
 
 use strict;
 use warnings;
 
 # VERSION
 
-use parent qw(OpenTracing::Common);
-
 =encoding utf8
 
 =head1 NAME
 
-OpenTracing::Batch - represents a group of zero or more spans
+OpenTracing::Tracer - application tracing
 
 =head1 DESCRIPTION
 
-A batch of spans is used for submitting results to an opentracing endpoint.
+This provides the interface between the OpenTracing API and the tracing service(s)
+for an application.
 
-Once you've created a batch, take a look at L</new_span> and the L<OpenTracing::SpanProxy>
-class.
+Typically a single process would have one tracer instance.
 
 =cut
 
-use Time::HiRes;
-use Scalar::Util ();
+use OpenTracing::Process;
+use OpenTracing::Span;
+use OpenTracing::SpanProxy;
 
-=head1 METHODS
+use Time::HiRes ();
+
+sub new {
+    my ($class, %args) = @_;
+    bless \%args, $class
+}
 
 =head2 process
 
-Returns the L<OpenTracing::Process> that this batch applies to. Each batch is
-submitted from a single process.
+Returns the current L<OpenTracing::Process>.
 
 =cut
 
-sub process { shift->{process} //= OpenTracing::Process->new }
+sub process {
+    shift->{process} //= OpenTracing::Process->new(
+        pid => $$
+    )
+}
+
+sub is_enabled { shift->{is_enabled} }
 
 =head2 spans
 
@@ -69,28 +78,17 @@ sub add_span {
     $span
 }
 
-=head2 new_span
-
-Creates a new L<OpenTracing::Span>, adds it to this batch, and returns an
-L<OpenTracing::SpanProxy> instance (which will automatically mark the end
-of the span when it's destroyed).
-
-This is most likely to be the method you'll want for working with spans
-in user code.
-
-=cut
-
-sub new_span {
+sub span {
     my ($self, $name, %args) = @_;
-    $args{operation_name} = $name;
+    $args{operation_name} = $name // (caller 1)[3];
     $args{start_time} //= Time::HiRes::time() * 1_000_000;
     $self->add_span(
         my $span = OpenTracing::Span->new(
-            batch => $self,
+            tracer => $self,
             %args
         )
     );
-    return OpenTracing::SpanProxy->new(span => $span)
+    return OpenTracing::SpanProxy->new(span => $span);
 }
 
 =head2 DESTROY
